@@ -28,31 +28,40 @@ async function syncInquiries(adapter) {
   return { fetched: raws.length, inserted };
 }
 
-function analyzePending() {
+async function analyzePending(config) {
   const pending = inquiriesDao.listNeedingAnalysis();
   let analyzed = 0;
   let highRisk = 0;
+  let failed = 0;
   for (const inq of pending) {
-    const cls = classify(inq.customer_message);
-    const { draft } = generateDraft({
-      inquiry: { productName: inq.product_name },
-      review: { category: cls.category },
-    });
-    const safety = checkDraft({ draft, classifierFlags: cls.safetyFlags });
-    const finalFlags = Array.from(new Set([...cls.safetyFlags, ...safety.allFlags]));
-    aiReviewsDao.insert(inq.id, {
-      category: cls.category,
-      sentiment: cls.sentiment,
-      riskLevel: cls.riskLevel,
-      draftReply: draft,
-      safetyFlags: finalFlags,
-      confidence: cls.confidence,
-    });
-    inquiriesDao.setStatus(inq.id, 'awaiting_approval');
-    analyzed += 1;
-    if (cls.riskLevel === 'high') highRisk += 1;
+    try {
+      const cls = await classify(inq.customer_message, config);
+      const { draft } = await generateDraft(
+        {
+          inquiry: { productName: inq.product_name, customerMessage: inq.customer_message },
+          review: { category: cls.category },
+        },
+        config,
+      );
+      const safety = checkDraft({ draft, classifierFlags: cls.safetyFlags });
+      const finalFlags = Array.from(new Set([...cls.safetyFlags, ...safety.allFlags]));
+      aiReviewsDao.insert(inq.id, {
+        category: cls.category,
+        sentiment: cls.sentiment,
+        riskLevel: cls.riskLevel,
+        draftReply: draft,
+        safetyFlags: finalFlags,
+        confidence: cls.confidence,
+      });
+      inquiriesDao.setStatus(inq.id, 'awaiting_approval');
+      analyzed += 1;
+      if (cls.riskLevel === 'high') highRisk += 1;
+    } catch (err) {
+      failed += 1;
+      logger.error('문의 분석 실패', { inquiryId: inq.id, error: err.message });
+    }
   }
-  return { analyzed, highRisk };
+  return { analyzed, highRisk, failed };
 }
 
 async function runOnce() {
@@ -66,7 +75,7 @@ async function runOnce() {
     const config = loadConfig();
     const adapter = createAdapter(config);
     const sync = await syncInquiries(adapter);
-    const analysis = analyzePending();
+    const analysis = await analyzePending(config);
     state.lastBatchStats = { ...sync, ...analysis, startedAt };
     state.lastSyncAt = new Date().toISOString();
     state.lastError = null;

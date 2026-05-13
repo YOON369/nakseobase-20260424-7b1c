@@ -12,6 +12,16 @@
     "blockHighRisk": true,
     "maxReplyLength": 1000
   },
+  "ai": {
+    "provider": "claude-cli",
+    "fallbackToRules": true,
+    "claudeCli": {
+      "binary": "claude",
+      "model": null,
+      "timeoutSeconds": 60,
+      "maskPiiBeforeSending": true
+    }
+  },
   "operator": {
     "displayName": "로컬 운영자"
   }

@@ -11,7 +11,7 @@
 
 ## 빠른 시작
 
-요구사항: Node.js 20+ 이상.
+요구사항: Node.js 20+ 이상, (선택) **Claude CLI**.
 
 ```bash
 npm install
@@ -21,6 +21,56 @@ npm start                  # http://127.0.0.1:4100
 
 처음 실행 시 `.gnet/coupang-cs/config.json`이 `config.example.json`에서 자동 생성된다.
 SQLite DB는 `.gnet/coupang-cs/data.sqlite`로 만들어진다.
+
+## AI: Claude API 키가 아닌 "Claude 구독" 사용
+
+본 서비스는 사용자의 로컬 **Claude CLI (Claude Code)** 를 subprocess로 호출해서
+이미 결제 중인 Claude 구독으로 분류/답변 초안을 만든다. 별도의 Anthropic API key는
+필요 없다.
+
+### 설치 절차
+
+```bash
+# 1) Claude CLI 설치 (Node 환경 기준)
+npm install -g @anthropic-ai/claude-code
+
+# 2) 직접 한 번 실행해 구독 계정으로 로그인 (대화형 OAuth)
+claude
+
+# 3) 설치 확인 + 구독 연결 점검
+npm run check:claude
+```
+
+`npm run check:claude` 가 `OK · claude CLI 연결됨 → x.y.z (Claude Code)` 라고 나오면 준비 끝.
+
+### 동작 방식
+
+- 기본값 `config.ai.provider = "claude-cli"`. 분류/답변은 다음과 같이 호출됨.
+
+  ```
+  claude -p --no-session-persistence --output-format json \
+         --append-system-prompt "<system>" \
+         --json-schema '<schema>'
+  ```
+
+- 응답의 `structured_output` 필드(스키마 적용된 구조화 출력)를 사용. 텍스트 파싱 실패 시
+  `result` 본문에서 JSON을 추출하는 폴백 경로도 있음.
+- CLI 호출이 실패하면(미설치/타임아웃/응답 오류) `config.ai.fallbackToRules === true`일 때
+  내장 rule-based로 자동 폴백.
+- 룰이 high-risk로 본 건은 LLM이 낮추지 못한다 — 두 결과의 위험도와 safety flag를 머지.
+- 호출 전에 전화번호/이메일/주민번호는 `[PHONE]/[EMAIL]/[RRN]`으로 마스킹 (기본값,
+  `config.ai.claudeCli.maskPiiBeforeSending`로 끄기 가능).
+
+### 비용 / 데이터
+
+- 호출 비용은 Anthropic 종량 API가 아니라 **사용자가 로그인한 Claude 구독**에 청구된다.
+- 다만 메시지 내용은 호출 시점에 Anthropic 서버로 전송된다. 민감 데이터를 보내고 싶지
+  않다면 `ai.provider = "rule-based"` 로 두거나 PII 마스킹을 켜둘 것 (기본 켜짐).
+
+### Provider 전환
+
+대시보드 → 설정 → `ai` 섹션에서 provider, CLI 경로, model, timeout, PII 마스킹을 바꿀 수 있다.
+설정 변경 즉시 다음 분석부터 새 provider로 동작.
 
 ## 흐름
 
@@ -116,8 +166,9 @@ curl -s http://127.0.0.1:4100/api/ip-guard/status | jq
 ## 아직 mock 인 부분
 
 - `src/coupang/realAdapter.js` — 실제 Coupang Wing OpenAPI 호출. 현재 호출 시 NotImplemented.
-- `src/ai/classifier.js` / `src/ai/replyGenerator.js` — 룰 기반 / 템플릿 기반. LLM 미연결.
 - 외부 IP 조회는 `api.ipify.org` 사용. 네트워크 차단 환경에서는 `UNKNOWN`이 될 수 있다.
+
+AI 측은 `claude-cli` provider가 기본이며, CLI 미설치 시 자동으로 룰/템플릿 폴백.
 
 ## 다음 단계 (실제 Coupang OpenAPI 연결)
 
@@ -131,8 +182,9 @@ curl -s http://127.0.0.1:4100/api/ip-guard/status | jq
 ## 운영 명령
 
 ```bash
-npm start          # 서버 시작
-npm run dev        # --watch 모드
-npm run seed       # 서버 없이 1회 동기화+분석 (DB만 채움)
-npm run reset      # data.sqlite + logs/ 삭제 (config.json은 보존)
+npm start              # 서버 시작
+npm run dev            # --watch 모드
+npm run seed           # 서버 없이 1회 동기화+분석 (DB만 채움)
+npm run reset          # data.sqlite + logs/ 삭제 (config.json은 보존)
+npm run check:claude   # claude CLI 연결 점검
 ```

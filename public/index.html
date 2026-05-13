@@ -108,6 +108,35 @@
             <p class="hint" id="key-status">키 상태 로딩 중…</p>
           </fieldset>
           <fieldset>
+            <legend>ai (분류/답변)</legend>
+            <label>provider
+              <select name="ai.provider">
+                <option value="claude-cli">claude-cli (사용자 구독 사용)</option>
+                <option value="rule-based">rule-based (오프라인 폴백)</option>
+              </select>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="ai.fallbackToRules" />
+              CLI 실패 시 rule-based로 자동 폴백
+            </label>
+            <label>claude CLI 경로
+              <input type="text" name="ai.claudeCli.binary" placeholder="claude" />
+            </label>
+            <label>model (비워두면 CLI 기본)
+              <input type="text" name="ai.claudeCli.model" placeholder="claude-sonnet-4-6 등" />
+            </label>
+            <label>timeout (초)
+              <input type="number" name="ai.claudeCli.timeoutSeconds" min="5" max="300" />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="ai.claudeCli.maskPiiBeforeSending" />
+              호출 전 PII 마스킹 (권장)
+            </label>
+            <p class="hint">claude CLI는 사용자가 로그인한 Claude 구독 계정을 사용합니다. API key는 사용하지 않습니다.</p>
+            <button type="button" class="btn small" id="ai-check-btn">claude CLI 연결 점검</button>
+            <p class="hint" id="ai-check-status"></p>
+          </fieldset>
+          <fieldset>
             <legend>safety</legend>
             <label class="checkbox">
               <input type="checkbox" name="safety.requireApprovalForAll" />

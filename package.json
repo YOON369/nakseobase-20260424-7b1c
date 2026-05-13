@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "seed": "node src/scripts/seed.js",
-    "reset": "node src/scripts/reset.js"
+    "reset": "node src/scripts/reset.js",
+    "check:claude": "node src/scripts/check-claude.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.5.0",

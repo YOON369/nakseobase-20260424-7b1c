@@ -20,6 +20,7 @@ import {
   getWorkerStatus,
   triggerRunNow,
 } from '../worker.js';
+import { getProvider, listProviders } from '../ai/llm/provider.js';
 import { logger } from '../logger.js';
 
 export const router = express.Router();
@@ -117,27 +118,60 @@ router.get('/inquiries/:id', (req, res) => {
   });
 });
 
-router.post('/inquiries/:id/reanalyze', (req, res) => {
-  const id = Number(req.params.id);
-  const data = inquiriesDao.get(id);
-  if (!data) return res.status(404).json({ error: 'not_found' });
-  const cls = classify(data.inquiry.customer_message);
-  const { draft } = generateDraft({
-    inquiry: { productName: data.inquiry.product_name },
-    review: { category: cls.category },
+router.post('/inquiries/:id/reanalyze', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const data = inquiriesDao.get(id);
+    if (!data) return res.status(404).json({ error: 'not_found' });
+    const config = loadConfig();
+    const cls = await classify(data.inquiry.customer_message, config);
+    const { draft } = await generateDraft(
+      {
+        inquiry: {
+          productName: data.inquiry.product_name,
+          customerMessage: data.inquiry.customer_message,
+        },
+        review: { category: cls.category },
+      },
+      config,
+    );
+    const safety = checkDraft({ draft, classifierFlags: cls.safetyFlags });
+    const finalFlags = Array.from(new Set([...cls.safetyFlags, ...safety.allFlags]));
+    aiReviewsDao.insert(id, {
+      category: cls.category,
+      sentiment: cls.sentiment,
+      riskLevel: cls.riskLevel,
+      draftReply: draft,
+      safetyFlags: finalFlags,
+      confidence: cls.confidence,
+    });
+    inquiriesDao.setStatus(id, 'awaiting_approval');
+    res.json({ ok: true, provider: getProvider(config).id });
+  } catch (err) {
+    logger.error('reanalyze 실패', { error: err.message });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/ai/check', async (req, res) => {
+  const config = loadConfig();
+  const desired = req.query.provider || config?.ai?.provider || 'rule-based';
+  const tryConfig = { ...config, ai: { ...(config.ai || {}), provider: desired } };
+  const provider = getProvider(tryConfig);
+  try {
+    const r = await provider.healthCheck();
+    res.json({ ok: true, provider: provider.id, ...r });
+  } catch (err) {
+    res.status(500).json({ ok: false, provider: provider.id, error: err.message });
+  }
+});
+
+router.get('/ai/providers', (_req, res) => {
+  const config = loadConfig();
+  res.json({
+    current: config?.ai?.provider || 'rule-based',
+    available: listProviders(),
   });
-  const safety = checkDraft({ draft, classifierFlags: cls.safetyFlags });
-  const finalFlags = Array.from(new Set([...cls.safetyFlags, ...safety.allFlags]));
-  aiReviewsDao.insert(id, {
-    category: cls.category,
-    sentiment: cls.sentiment,
-    riskLevel: cls.riskLevel,
-    draftReply: draft,
-    safetyFlags: finalFlags,
-    confidence: cls.confidence,
-  });
-  inquiriesDao.setStatus(id, 'awaiting_approval');
-  res.json({ ok: true });
 });
 
 async function performSend({ id, reply, approvedBy, actionType }) {
@@ -336,6 +370,28 @@ router.patch('/config', (req, res) => {
   }
   if (body.safety && typeof body.safety.maxReplyLength === 'number') {
     allowed.safety.maxReplyLength = Math.max(100, Math.min(4000, body.safety.maxReplyLength));
+  }
+  allowed.ai = {};
+  if (body.ai && typeof body.ai.provider === 'string' && listProviders().includes(body.ai.provider)) {
+    allowed.ai.provider = body.ai.provider;
+  }
+  if (body.ai && typeof body.ai.fallbackToRules === 'boolean') {
+    allowed.ai.fallbackToRules = body.ai.fallbackToRules;
+  }
+  if (body.ai && body.ai.claudeCli && typeof body.ai.claudeCli === 'object') {
+    allowed.ai.claudeCli = {};
+    if (typeof body.ai.claudeCli.binary === 'string' && body.ai.claudeCli.binary.length < 200) {
+      allowed.ai.claudeCli.binary = body.ai.claudeCli.binary;
+    }
+    if (body.ai.claudeCli.model === null || typeof body.ai.claudeCli.model === 'string') {
+      allowed.ai.claudeCli.model = body.ai.claudeCli.model || null;
+    }
+    if (typeof body.ai.claudeCli.timeoutSeconds === 'number') {
+      allowed.ai.claudeCli.timeoutSeconds = Math.max(5, Math.min(300, body.ai.claudeCli.timeoutSeconds));
+    }
+    if (typeof body.ai.claudeCli.maskPiiBeforeSending === 'boolean') {
+      allowed.ai.claudeCli.maskPiiBeforeSending = body.ai.claudeCli.maskPiiBeforeSending;
+    }
   }
   const next = saveConfig(allowed);
   res.json(publicConfig(next));

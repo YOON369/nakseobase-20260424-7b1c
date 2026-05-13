@@ -260,7 +260,7 @@ async function refreshIpGuard() {
     <div style="margin-top:6px;font-size:12px;color:#5b6175;">실제 API 모드: ${cfg.coupang?.apiEnabled ? '활성' : '비활성'}</div>
   `;
   document.getElementById('mode-badge').textContent =
-    `mode: ${cfg.mode || 'mock'}${cfg.coupang?.apiEnabled ? ' · apiEnabled' : ''}`;
+    `mode: ${cfg.mode || 'mock'} · ai: ${cfg.ai?.provider || 'rule-based'}${cfg.coupang?.apiEnabled ? ' · apiEnabled' : ''}`;
 }
 
 async function refreshWorker() {
@@ -331,9 +331,29 @@ document.getElementById('config-btn').addEventListener('click', async () => {
   form['safety.requireApprovalForAll'].checked = cfg.safety?.requireApprovalForAll !== false;
   form['safety.blockHighRisk'].checked = cfg.safety?.blockHighRisk !== false;
   form['safety.maxReplyLength'].value = cfg.safety?.maxReplyLength ?? 1000;
+  form['ai.provider'].value = cfg.ai?.provider || 'claude-cli';
+  form['ai.fallbackToRules'].checked = cfg.ai?.fallbackToRules !== false;
+  form['ai.claudeCli.binary'].value = cfg.ai?.claudeCli?.binary || 'claude';
+  form['ai.claudeCli.model'].value = cfg.ai?.claudeCli?.model || '';
+  form['ai.claudeCli.timeoutSeconds'].value = cfg.ai?.claudeCli?.timeoutSeconds ?? 60;
+  form['ai.claudeCli.maskPiiBeforeSending'].checked = cfg.ai?.claudeCli?.maskPiiBeforeSending !== false;
   document.getElementById('key-status').textContent =
     `accessKey: ${cfg.coupang?.accessKey || '(미설정)'} · secretKey: ${cfg.coupang?.secretKey || '(미설정)'}`;
+  document.getElementById('ai-check-status').textContent = '';
   configModal.hidden = false;
+});
+
+document.getElementById('ai-check-btn').addEventListener('click', async () => {
+  const target = document.getElementById('ai-check-status');
+  target.textContent = '점검 중…';
+  try {
+    const r = await api.get('/api/ai/check?provider=claude-cli');
+    target.textContent = `OK · ${r.version || ''}`;
+    target.style.color = '#1f7a47';
+  } catch (err) {
+    target.textContent = `FAIL · ${err.message}`;
+    target.style.color = '#c0392b';
+  }
 });
 
 document.getElementById('config-close').addEventListener('click', () => {
@@ -356,6 +376,16 @@ document.getElementById('config-form').addEventListener('submit', async (e) => {
       requireApprovalForAll: form['safety.requireApprovalForAll'].checked,
       blockHighRisk: form['safety.blockHighRisk'].checked,
       maxReplyLength: Number(form['safety.maxReplyLength'].value),
+    },
+    ai: {
+      provider: form['ai.provider'].value,
+      fallbackToRules: form['ai.fallbackToRules'].checked,
+      claudeCli: {
+        binary: form['ai.claudeCli.binary'].value || 'claude',
+        model: form['ai.claudeCli.model'].value || null,
+        timeoutSeconds: Number(form['ai.claudeCli.timeoutSeconds'].value) || 60,
+        maskPiiBeforeSending: form['ai.claudeCli.maskPiiBeforeSending'].checked,
+      },
     },
   };
   try {
