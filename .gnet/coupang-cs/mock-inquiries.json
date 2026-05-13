@@ -1,0 +1,82 @@
+[
+  {
+    "coupangInquiryId": "CPNG-2026051301",
+    "sourceType": "customer",
+    "productName": "프리미엄 무선 이어폰 X1",
+    "orderId": "20260512-1003-7788",
+    "customerMessage": "어제 주문했는데 아직도 배송 시작이 안 됐어요. 언제 출발하나요? 빨리 받고 싶습니다.",
+    "receivedAt": "2026-05-13T08:12:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051302",
+    "sourceType": "product",
+    "productName": "프리미엄 무선 이어폰 X1",
+    "orderId": null,
+    "customerMessage": "이 이어폰은 노이즈 캔슬링 기능이 있나요? 배터리는 몇 시간 가나요?",
+    "receivedAt": "2026-05-13T09:05:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051303",
+    "sourceType": "customer",
+    "productName": "스테인리스 텀블러 500ml",
+    "orderId": "20260510-2210-1141",
+    "customerMessage": "받았는데 박스가 다 찌그러져 있고 텀블러도 파손되어 있어요. 사진 첨부했습니다.",
+    "receivedAt": "2026-05-13T10:31:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051304",
+    "sourceType": "customer",
+    "productName": "프리미엄 무선 이어폰 X1",
+    "orderId": "20260509-0931-9012",
+    "customerMessage": "환불해주세요. 사용해보니 음질이 너무 별로네요. 무조건 환불 안 해주면 소비자원에 신고하겠습니다.",
+    "receivedAt": "2026-05-13T11:02:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051305",
+    "sourceType": "customer",
+    "productName": "주방용 실리콘 매트",
+    "orderId": "20260511-1830-5523",
+    "customerMessage": "사이즈가 맞지 않아서 교환하고 싶습니다. 다른 사이즈로 교환 가능한가요?",
+    "receivedAt": "2026-05-13T11:48:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051306",
+    "sourceType": "customer",
+    "productName": "휴대용 미니 선풍기",
+    "orderId": "20260507-1500-2387",
+    "customerMessage": "버튼을 눌러도 켜지지 않습니다. 불량인 것 같아요. 어떻게 해야 하나요?",
+    "receivedAt": "2026-05-13T12:20:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051307",
+    "sourceType": "customer",
+    "productName": "캠핑용 LED 랜턴",
+    "orderId": "20260512-0822-4456",
+    "customerMessage": "주문한 거랑 다른 제품이 왔어요. 빨리 처리 안 해주면 정말 화나고 별로네요. 최악입니다.",
+    "receivedAt": "2026-05-13T13:14:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051308",
+    "sourceType": "product",
+    "productName": "스테인리스 텀블러 500ml",
+    "orderId": null,
+    "customerMessage": "이거 식기세척기에 넣어도 되나요? 보온은 몇 시간 유지되는지 알려주세요.",
+    "receivedAt": "2026-05-13T13:55:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051309",
+    "sourceType": "customer",
+    "productName": "주방용 실리콘 매트",
+    "orderId": "20260513-0712-9981",
+    "customerMessage": "구성품 중에 작은 매트가 누락되어 왔습니다. 확인 부탁드립니다.",
+    "receivedAt": "2026-05-13T14:30:00+09:00"
+  },
+  {
+    "coupangInquiryId": "CPNG-2026051310",
+    "sourceType": "customer",
+    "productName": "프리미엄 무선 이어폰 X1",
+    "orderId": "20260508-1632-0078",
+    "customerMessage": "고객센터에 전화해도 안 받네요. 제 번호 010-1234-5678로 연락주세요. 이메일은 test@example.com 입니다. 이거 해결 안 되면 고소도 검토합니다.",
+    "receivedAt": "2026-05-13T15:02:00+09:00"
+  }
+]

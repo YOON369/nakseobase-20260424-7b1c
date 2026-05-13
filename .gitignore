@@ -6,3 +6,15 @@ node_modules
 .env*.local
 *.tsbuildinfo
 .DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# .gnet runtime data (코드와 분리, 외부 노출 금지)
+.gnet/coupang-cs/config.json
+.gnet/coupang-cs/data.sqlite
+.gnet/coupang-cs/data.sqlite-journal
+.gnet/coupang-cs/data.sqlite-shm
+.gnet/coupang-cs/data.sqlite-wal
+.gnet/coupang-cs/logs/

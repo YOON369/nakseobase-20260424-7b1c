@@ -1,0 +1,18 @@
+{
+  "mode": "mock",
+  "pollIntervalMinutes": 5,
+  "ipGuardIntervalMinutes": 1,
+  "coupang": {
+    "vendorId": "",
+    "registeredIp": "",
+    "apiEnabled": false
+  },
+  "safety": {
+    "requireApprovalForAll": true,
+    "blockHighRisk": true,
+    "maxReplyLength": 1000
+  },
+  "operator": {
+    "displayName": "로컬 운영자"
+  }
+}

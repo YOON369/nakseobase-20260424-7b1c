@@ -1,0 +1,21 @@
+{
+  "name": "coupang-local-cs",
+  "version": "0.1.0",
+  "description": "쿠팡 판매자용 로컬 AI 고객 서비스 (MVP)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/scripts/seed.js",
+    "reset": "node src/scripts/reset.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

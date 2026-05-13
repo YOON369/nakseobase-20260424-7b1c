@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>쿠팡 로컬 AI CS</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>쿠팡 로컬 AI CS</h1>
+        <span class="badge" id="mode-badge">mode: loading…</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn" id="run-now-btn">동기화 즉시 실행</button>
+        <button class="btn ghost" id="config-btn">설정</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section id="stats" class="stats-grid">
+        <!-- cards injected -->
+      </section>
+
+      <section class="dual">
+        <aside class="side">
+          <div class="card">
+            <h2>IP Guard</h2>
+            <div id="ip-guard" class="ip-guard">불러오는 중…</div>
+            <button class="btn small" id="ip-check-btn">지금 확인</button>
+          </div>
+          <div class="card">
+            <h2>Worker</h2>
+            <div id="worker-status" class="worker-status">불러오는 중…</div>
+          </div>
+          <div class="card">
+            <h2>Mission</h2>
+            <div id="mission" class="mission">불러오는 중…</div>
+          </div>
+        </aside>
+
+        <section class="main-panel">
+          <div class="card list-card">
+            <div class="list-header">
+              <h2>문의 목록</h2>
+              <div class="filters">
+                <label>상태
+                  <select id="status-filter">
+                    <option value="">전체</option>
+                    <option value="new">신규</option>
+                    <option value="awaiting_approval">승인 대기</option>
+                    <option value="on_hold">보류</option>
+                    <option value="sent">전송됨</option>
+                    <option value="failed">실패</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div id="inquiries" class="inquiries">불러오는 중…</div>
+          </div>
+
+          <div class="card detail-card" id="detail-card" hidden>
+            <div class="detail-header">
+              <h2 id="detail-title">문의 상세</h2>
+              <button class="btn ghost small" id="detail-close">닫기</button>
+            </div>
+            <div id="detail-body">상세 정보를 불러오는 중…</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <div class="modal" id="config-modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>설정</h2>
+          <button class="btn ghost small" id="config-close">닫기</button>
+        </div>
+        <form id="config-form" class="config-form">
+          <label>mode
+            <select name="mode">
+              <option value="mock">mock</option>
+              <option value="real">real (실제 API)</option>
+            </select>
+          </label>
+          <label>pollIntervalMinutes
+            <input type="number" name="pollIntervalMinutes" min="1" />
+          </label>
+          <label>ipGuardIntervalMinutes
+            <input type="number" name="ipGuardIntervalMinutes" min="1" />
+          </label>
+          <fieldset>
+            <legend>coupang</legend>
+            <label>vendorId
+              <input type="text" name="coupang.vendorId" />
+            </label>
+            <label>registeredIp
+              <input type="text" name="coupang.registeredIp" placeholder="예: 123.123.123.123" />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="coupang.apiEnabled" />
+              실제 API 활성화 (real 모드에서만 동작)
+            </label>
+            <p class="hint">accessKey / secretKey는 <code>.env</code>에만 저장됩니다.</p>
+            <p class="hint" id="key-status">키 상태 로딩 중…</p>
+          </fieldset>
+          <fieldset>
+            <legend>safety</legend>
+            <label class="checkbox">
+              <input type="checkbox" name="safety.requireApprovalForAll" />
+              모든 답변을 사람 승인 후 전송
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="safety.blockHighRisk" />
+              위험도 high 자동 차단
+            </label>
+            <label>최대 답변 길이
+              <input type="number" name="safety.maxReplyLength" min="100" max="4000" />
+            </label>
+          </fieldset>
+          <div class="modal-actions">
+            <button class="btn primary" type="submit">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

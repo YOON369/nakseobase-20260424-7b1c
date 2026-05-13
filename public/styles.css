@@ -1,0 +1,125 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", system-ui, sans-serif; background: #f5f6fa; color: #1f2330; }
+h1, h2, h3 { margin: 0; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; background: #1f2330; color: #f5f6fa;
+  border-bottom: 1px solid #0e1018;
+}
+.topbar h1 { font-size: 18px; font-weight: 600; }
+.topbar-left { display: flex; gap: 12px; align-items: center; }
+.topbar-right { display: flex; gap: 8px; }
+
+.badge { font-size: 12px; padding: 2px 8px; background: #353a4a; border-radius: 999px; }
+
+.layout { padding: 16px 24px 40px; max-width: 1400px; margin: 0 auto; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: #fff; border-radius: 12px; padding: 12px 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.stat-card .label { font-size: 12px; color: #5b6175; }
+.stat-card .value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+.stat-card.warning .value { color: #c0392b; }
+.stat-card.ok .value { color: #1f7a47; }
+
+.dual { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 900px) { .dual { grid-template-columns: 1fr; } }
+
+.card {
+  background: #fff; border-radius: 12px; padding: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); margin-bottom: 16px;
+}
+.card h2 { font-size: 14px; color: #5b6175; margin-bottom: 12px; font-weight: 600; }
+
+.side .card .ip-guard, .side .card .worker-status, .side .card .mission { font-size: 13px; line-height: 1.6; }
+
+.ip-guard .row, .worker-status .row { display: flex; justify-content: space-between; gap: 8px; }
+.ip-guard .label, .worker-status .label { color: #5b6175; }
+
+.status-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.status-ok { background: #d6f5e3; color: #1f7a47; }
+.status-blocked { background: #fde2e2; color: #c0392b; }
+.status-unknown { background: #ecedf2; color: #5b6175; }
+
+.list-card .list-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+}
+.filters select { padding: 4px 8px; border: 1px solid #d8dae2; border-radius: 6px; }
+
+.inquiries .row {
+  display: grid; grid-template-columns: 110px 1fr 80px 90px 110px 90px;
+  gap: 8px; padding: 10px 8px; border-bottom: 1px solid #eef0f5;
+  align-items: center; cursor: pointer; font-size: 13px;
+}
+.inquiries .row:hover { background: #f5f6fa; }
+.inquiries .row.header { font-weight: 600; color: #5b6175; cursor: default; font-size: 12px; }
+.inquiries .row.header:hover { background: transparent; }
+.inquiries .excerpt { color: #1f2330; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inquiries .meta { color: #5b6175; font-size: 12px; }
+
+.risk-low { color: #1f7a47; }
+.risk-medium { color: #c87a00; }
+.risk-high { color: #c0392b; font-weight: 700; }
+
+.detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.detail-section { margin-bottom: 16px; }
+.detail-section h3 { font-size: 13px; color: #5b6175; margin-bottom: 6px; font-weight: 600; }
+.detail-section .original { white-space: pre-wrap; background: #f5f6fa; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.detail-section .flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.flag-pill { background: #fff3cd; color: #8a6d1d; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.flag-pill.danger { background: #fde2e2; color: #c0392b; }
+.draft-edit textarea {
+  width: 100%; min-height: 160px; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid #d8dae2; font-family: inherit; font-size: 14px; line-height: 1.5; resize: vertical;
+}
+.draft-edit .charcount { font-size: 12px; color: #5b6175; text-align: right; margin-top: 4px; }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+.btn {
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #d8dae2; background: #fff;
+  cursor: pointer; font-size: 13px; font-family: inherit; color: #1f2330;
+}
+.btn:hover { background: #f0f1f6; }
+.btn.primary { background: #2c54d9; border-color: #2c54d9; color: #fff; }
+.btn.primary:hover { background: #2042b0; }
+.btn.danger { background: #fff; border-color: #c0392b; color: #c0392b; }
+.btn.danger:hover { background: #fde2e2; }
+.btn.ghost { background: transparent; }
+.btn.small { padding: 4px 10px; font-size: 12px; }
+
+.toast {
+  position: fixed; bottom: 20px; right: 20px; padding: 12px 16px;
+  background: #1f2330; color: #fff; border-radius: 8px; font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); max-width: 360px;
+}
+.toast.error { background: #c0392b; }
+.toast.success { background: #1f7a47; }
+
+.modal {
+  position: fixed; inset: 0; background: rgba(15,18,28,0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 480px; max-width: 92vw; max-height: 90vh; overflow: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.config-form label { display: block; margin-bottom: 10px; font-size: 13px; color: #1f2330; }
+.config-form input[type=text], .config-form input[type=number], .config-form select {
+  width: 100%; margin-top: 4px; padding: 6px 10px; border: 1px solid #d8dae2; border-radius: 6px; font-size: 13px;
+}
+.config-form .checkbox { display: flex; gap: 6px; align-items: center; }
+.config-form fieldset { border: 1px solid #eef0f5; border-radius: 8px; padding: 10px; margin: 12px 0; }
+.config-form fieldset legend { padding: 0 6px; color: #5b6175; font-size: 12px; }
+.config-form .hint { font-size: 12px; color: #5b6175; }
+.config-form code { background: #f0f1f6; padding: 1px 4px; border-radius: 4px; }
+.modal-actions { display: flex; justify-content: flex-end; }
+
+.mission .principles, .mission .agents { padding-left: 18px; margin: 6px 0 8px; }
+.mission .principles li, .mission .agents li { font-size: 12px; }

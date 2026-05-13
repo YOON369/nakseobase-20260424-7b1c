@@ -1,0 +1,35 @@
+{
+  "id": "coupang-cs",
+  "title": "쿠팡 로컬 AI CS",
+  "summary": "쿠팡 판매자의 고객 문의와 클레임을 로컬 AI 서비스가 분류하고, 답변 초안을 생성하고, 사람이 승인한 뒤 쿠팡에 답변하는 시스템.",
+  "principles": [
+    "SaaS가 아닌 로컬 우선",
+    "API Key와 고객 데이터는 외부 서버로 나가지 않는다",
+    "고정 공인 IP만 쿠팡 OpenAPI 호출 가능 (IP Guard 필수)",
+    "처음부터 자동 답변은 금지. 사람 승인 후에만 전송",
+    "수집 → AI 초안 → 안전 검사 → 사람 승인 → 답변 전송"
+  ],
+  "agents": [
+    { "id": "coupang-api", "name": "Coupang API Agent", "role": "쿠팡 OpenAPI 호출 및 응답 표준화" },
+    { "id": "ip-guard", "name": "IP Guard Agent", "role": "현재 공인 IP와 등록된 IP를 비교, 불일치 시 API 호출 차단" },
+    { "id": "cs-classifier", "name": "CS Classifier Agent", "role": "문의를 카테고리/감정/위험도로 분류" },
+    { "id": "reply-generator", "name": "Reply Generator Agent", "role": "분류 결과를 바탕으로 한국어 답변 초안 생성" },
+    { "id": "safety-review", "name": "Safety Review Agent", "role": "환불 약속, 보상 약속, 법적/개인정보 위험 검사" },
+    { "id": "human-approval", "name": "Human Approval Agent", "role": "운영자 승인 흐름 관리" },
+    { "id": "dashboard", "name": "Dashboard Agent", "role": "운영자 화면에 상태/리스트/상세 표시" },
+    { "id": "analytics", "name": "Analytics Agent", "role": "처리량/위험률/응답시간 통계 (이후 단계)" }
+  ],
+  "stages": [
+    "수집 (Mock Sync)",
+    "AI 분류 + 초안 생성",
+    "Safety Guard 검사",
+    "사람 승인 대기",
+    "답변 전송 (mock → 실제 API)"
+  ],
+  "milestones": [
+    { "id": "M1", "title": "Mock 흐름 End-to-End", "status": "in-progress" },
+    { "id": "M2", "title": "실제 Coupang OpenAPI 어댑터", "status": "todo" },
+    { "id": "M3", "title": "LLM 연결 (OpenAI/Claude/로컬)", "status": "todo" },
+    { "id": "M4", "title": "분석/통계 대시보드", "status": "todo" }
+  ]
+}
